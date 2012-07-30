@@ -41,7 +41,6 @@ class SuffixArray(object):
             self.temp_array += items
 
     def phase2(self):
-        self.phase1()
         for index, n_items in self.pending.items():
             group_of_next = {}
             array = self.temp_array[index: index + n_items]
@@ -49,7 +48,6 @@ class SuffixArray(object):
                 group_of_next[value] = self.group_by_index[value + self._index]
             sorted_items = sorted(group_of_next, key=group_of_next.get)
             self.temp_array[index: index + n_items] = sorted_items
-
 
             if array != sorted_items:
                 # update self.pending
@@ -60,6 +58,7 @@ class SuffixArray(object):
                 last_index = self.group[index]
 
                 for current_index in xrange(last_index - 1, last_index - n_items, -1):
+
                     if group_of_next[self.temp_array[current_index]] != group_of_next[self.temp_array[current_index + 1]]:
                         self.group[current_index] = current_index
                         if new_pending_group_items > 1:
@@ -69,36 +68,16 @@ class SuffixArray(object):
                         self.group[current_index] = self.group[current_index + 1]
                         new_pending_group_items += 1
 
+                    self.group_by_index[self.temp_array[current_index]] = self.group[current_index]
+
                     if new_pending_group_items > 1:
                         self.pending[current_index] = new_pending_group_items
 
-
-
-            # index_in_pending = len(self.group)
-            # if n_items != 1:
-            #     self.pending.pop(char)
-            # else:
-            #     self.pending[index_in_pending] = n_items
+                    self.group_by_index[self.temp_array[current_index]] = self.group[current_index]
 
         self._index *= 2
 
-        # group_indexes = sorted(self.group_dict.keys())
-        # for i in self.pending:
-        #     pass
-        # last_item_index = 0
-        # for index in group_indexes:
-        #     items = self.group_dict[index]
-        #     n_items = len(items)
-        #     last_item_index += n_items
-
-        #     for i in items:
-        #         self.group.append(last_item_index - 1)
-
-        #     self.temp_array += items
 
     def process(self):
-        self.phase3()
+        pass
 
-        print self.group_of_next
-
-        # phase 2
