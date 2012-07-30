@@ -119,27 +119,10 @@ class TestSuffixArray(unittest.TestCase):
         )
 
     def test_tobeornottobe(self):
-        self.suffix_array.phase1()
-        self.suffix_array.phase2()
-        self.suffix_array.phase2()
-        self.suffix_array.phase2()
         self.assertEqual(
-            self.suffix_array.temp_array,
+            self.suffix_array.process(),
             [13, 11, 2, 12, 3, 6, 10, 1, 4, 7, 5, 9, 0, 8]
         )
 
 if __name__ == "__main__":
     unittest.main()
-
-
-# temp[1] == 2
-# temp[2] == 11
-
-# group[1] == 2  # b
-# group[2] == 2  # b
-
-# pending[1] == 2 # dois elementos na posição 1 do temp
-# group_of_next[1] = ['e', 'e']
-
-# {2: 'e', 11: 'e'}
-

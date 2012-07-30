@@ -79,5 +79,7 @@ class SuffixArray(object):
 
 
     def process(self):
-        pass
-
+        self.phase1()
+        while self.pending:
+            self.phase2()
+        return self.temp_array
