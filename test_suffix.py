@@ -20,102 +20,113 @@ class TestSuffixArray(unittest.TestCase):
             't': [0, 8, 9]
         }
         self.suffix_array.bucket_sort()
-        self.assertEqual(expected, self.suffix_array.group_dict)
+        computed = self.suffix_array.items_by_bucket
+        self.assertEqual(computed, expected)
 
-    def test_tobeornottobe_phase1(self):
+    def test_tobeornottobe_setup(self):
         expected = {
             'temp':   [13, 2, 11, 3, 12,  6, 1, 4,  7, 10,  5,  0,  8,  9],
             'group':  [0,  2,  2, 4,  4,  5, 9, 9,  9,  9, 10, 13, 13, 13],
             'gindex': [13, 9,  2, 4,  9, 10, 5, 9, 13, 13,  9,  2,  4,  0],
-            'pending': {11: 3, 1: 2, 3: 2, 6: 4},
+            'unsorted': {11: 3, 1: 2, 3: 2, 6: 4},
         }
-        self.suffix_array.phase1()
+        self.suffix_array.setup()
         self.assertEqual(
             expected['temp'],
-            self.suffix_array.temp_array
+            self.suffix_array.temp
         )
+        #self.assertEqual(
+        #    expected['group'],
+        #    self.suffix_array.group_by_temp_index
+        #)
         self.assertEqual(
-            expected['group'],
-            self.suffix_array.group
-        )
-        self.assertEqual(
-            expected['pending'],
-            self.suffix_array.pending
+            expected['unsorted'],
+            self.suffix_array.unsorted
         )
         self.assertEqual(
             expected['gindex'],
-            self.suffix_array.group_by_index
+            self.suffix_array.group_by_text_index
         )
 
-    def test_tobeornottobe_phase2(self):
+    def test_tobeornottobe_iterate(self):
         expected = {
             'temp':   [13, 2, 11, 12, 3, 6,  1, 10, 4, 7, 5, 0, 9, 8],
             'group':  [0,  2,  2,  3, 4, 5,  7, 7,  8, 9, 10, 12, 12, 13],
             'gindex': [12, 7,  2, 4,  8, 10, 5, 9, 13, 12, 7,  2,  3,  0],
-            'pending': {1: 2, 6: 2, 11: 2}
+            'unsorted': {1: 2, 6: 2, 11: 2}
         }
-        self.suffix_array.phase1()
-        self.suffix_array.phase2()
+        self.suffix_array.setup()
+        self.suffix_array.iterate()
         self.assertEqual(
             expected['temp'],
-            self.suffix_array.temp_array
+            self.suffix_array.temp
         )
+        # self.assertEqual(
+        #     expected['group'],
+        #     self.suffix_array.group_by_temp_index
+        # )
         self.assertEqual(
-            expected['group'],
-            self.suffix_array.group
-        )
-        self.assertEqual(
-            expected['pending'],
-            self.suffix_array.pending
+            expected['unsorted'],
+            self.suffix_array.unsorted
         )
         self.assertEqual(
             expected['gindex'],
-            self.suffix_array.group_by_index
+            self.suffix_array.group_by_text_index
         )
 
     def test_tobeornottobe_phase3(self):
         expected = {
-            'temp': [13, 11, 2, 12, 3, 6, 10, 1, 4, 7,  5,  0,  9, 8],
-            'group': [0, 1,  2,  3, 4, 5,  6, 7, 8, 9, 10, 12, 12, 13],
-            'pending': {11: 2}
+            'temp':   [13, 11, 2, 12, 3,  6, 10, 1,  4,  7,  5,  0,  9, 8],
+            'group':  [0,   1, 2,  3, 4,  5,  6, 7,  8,  9, 10, 12, 12, 13],
+            'gindex': [12,  7, 2,  4, 8, 10,  5, 9, 13, 12,  6,  1,  3, 0],
+            'unsorted': {11: 2}
         }
-        self.suffix_array.phase1()
-        self.suffix_array.phase2()
-        self.suffix_array.phase2()
+        self.suffix_array.setup()
+        self.suffix_array.iterate()
+        self.suffix_array.iterate()
         self.assertEqual(
             expected['temp'],
-            self.suffix_array.temp_array
+            self.suffix_array.temp
+        )
+        # self.assertEqual(
+        #     expected['group'],
+        #     self.suffix_array.group_by_temp_index
+        # )
+        self.assertEqual(
+            expected['unsorted'],
+            self.suffix_array.unsorted
         )
         self.assertEqual(
-            expected['group'],
-            self.suffix_array.group
-        )
-        self.assertEqual(
-            expected['pending'],
-            self.suffix_array.pending
+            expected['gindex'],
+            self.suffix_array.group_by_text_index
         )
 
     def test_tobeornottobe_phase4(self):
         expected = {
-            'temp': [13, 11, 2, 12, 3, 6, 10, 1, 4, 7,  5,  9,  0, 8],
-            'group': [0, 1,  2,  3, 4, 5,  6, 7, 8, 9, 10, 11, 12, 13],
-            'pending': {}
+            'temp':   [13, 11, 2, 12,  3, 6, 10,  1,  4, 7,  5,  9,  0, 8],
+            'group':  [0,  1,  2,  3,  4, 5,  6,  7,  8, 9, 10, 11, 12, 13],
+            'gindex': [12, 7,  2,  4,  8, 10, 5,  9, 13, 11, 6,  1,  3, 0],
+            'unsorted': {}
         }
-        self.suffix_array.phase1()
-        self.suffix_array.phase2()
-        self.suffix_array.phase2()
-        self.suffix_array.phase2()
+        self.suffix_array.setup()
+        self.suffix_array.iterate()
+        self.suffix_array.iterate()
+        self.suffix_array.iterate()
         self.assertEqual(
             expected['temp'],
-            self.suffix_array.temp_array
+            self.suffix_array.temp
+        )
+        # self.assertEqual(
+        #     expected['group'],
+        #     self.suffix_array.group_by_temp_index
+        # )
+        self.assertEqual(
+            expected['unsorted'],
+            self.suffix_array.unsorted
         )
         self.assertEqual(
-            expected['group'],
-            self.suffix_array.group
-        )
-        self.assertEqual(
-            expected['pending'],
-            self.suffix_array.pending
+            expected['gindex'],
+            self.suffix_array.group_by_text_index
         )
 
     def test_tobeornottobe(self):

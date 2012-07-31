@@ -1,89 +1,106 @@
-class SuffixArray(object):
-    def __init__(self, text):
-        self._index = 1
+DOLLAR = chr(0)
 
-        self.text = "%s%s" % (text, chr(0))
-        self.temp_array = []  # suffix array wanna be
-        self.group = []  # values based on self.temp_array order
-        self.group_dict = {}  # letter of group: list of indexes
-        self.group_by_index = [None] * len(self.text)  # based on original self.text
-        self.pending = {}  # index in temp_array: number of items to be sorted
-        self.group_of_next = {}  # index in temp_array: next letters of items
+
+class SuffixArray(object):
+
+    def __init__(self, text):
+        self._delta = 1
+        self.text = "%s%s" % (text, DOLLAR)
+        self.temp = []  # suffix array under development
+
+        self.items_by_bucket = {}  # used by bucket sort and initial setup
+        # [suffix_first_char] => list of suffixes (represented by first pos)
+        # by convention, groups are represented by last group item's index
+
+        #self.group_by_temp_index = []
+        # [index in temp] => group (represented by last item pos)
+        # by convention, groups are represented by last group item's index
+        # TODO: Delete me!
+
+        self.group_by_text_index = [None] * len(self.text)
+        # [index in text] => group (represented by last item pos)
+
+        self.unsorted = {}  # suffixes that still need to be sorted
+        # [index in temp] => number of items
 
     def bucket_sort(self, text=None):
+        "Split suffixes into buckets according to their 1st char: O(n)"
         if text is None:
             text = self.text
-        self.group_dict = {}
-        for pos, char in enumerate(text):
-            index = char
-            self.group_dict[index] = self.group_dict.get(index, [])
-            self.group_dict[index] += [pos]
+        self.items_by_bucket = {}
+        for suffix_pos, suffix_first_char in enumerate(text):
+            index = suffix_first_char
+            self.items_by_bucket[index] = self.items_by_bucket.get(index, [])
+            self.items_by_bucket[index] += [suffix_pos]
 
-    def phase1(self):
-        self.bucket_sort()
-        group_indexes = sorted(self.group_dict.keys())
-        last_item_index = 0
-        for char in group_indexes:
-            items = self.group_dict[char]
-            n_items = len(items)
-            last_item_index += n_items
+    def setup(self):
+        "Create initial array - partially sorted by 1st char: O(n)"
+        self.bucket_sort()  # O(n)
+        sorted_buckets = sorted(self.items_by_bucket.keys())
+        index = 0
+        for bucket in sorted_buckets:  # O(n)
+            bucket_items = self.items_by_bucket[bucket]
+            len_bucket = len(bucket_items)
 
-            index_in_pending = len(self.group)
-            if n_items == 1:
-                self.group_dict.pop(char)
-            else:
-                self.pending[index_in_pending] = n_items
+            init_bucket = index
+            if len_bucket != 1:
+                self.unsorted[init_bucket] = len_bucket
 
-            for i in items:
-                self.group_by_index[i] = last_item_index - 1
-                self.group.append(last_item_index - 1)
+            end_bucket = index + len_bucket - 1
+            for init_suffix in bucket_items:  # O(m) where m = # items of bucket
+                group = end_bucket
+                self.group_by_text_index[init_suffix] = group
+                #self.group_by_temp_index.append(group)  # TODO: Delete me!
+            index += len_bucket
+            self.temp += bucket_items
 
-            self.temp_array += items
+    def iterate(self):
+        "Improve sorting based on the next char of each suffix: O(n)"
 
-    def phase2(self):
-        for index, n_items in self.pending.items():
-            group_of_next = {}
-            array = self.temp_array[index: index + n_items]
-            for value in array:
-                try:
-                    group_of_next[value] = self.group_by_index[value + self._index]
-                except IndexError:
-                    import pdb; pdb.set_trace()
-                    #group_of_next[value] = 0
-            sorted_items = sorted(group_of_next, key=group_of_next.get)
-            self.temp_array[index: index + n_items] = sorted_items
+        # for each unsorted group of suffixes, try to sort by next char's group
+        for init_group, len_group in self.unsorted.items():
+            next_char = {}
+            items = self.temp[init_group: init_group + len_group]
+            for init_suffix in items:
+                index = init_suffix
+                next_char[index] = self.group_by_text_index[index + self._delta]
 
-            if array != sorted_items:
-                # update self.pending
-                self.pending.pop(index)
-                new_pending_group_items = 1
+            # sort group suffixes by next char and update self.temp
+            end_group = init_group + len_group - 1
+            sorted_items = sorted(next_char, key=next_char.get)  # O(m.log(m))
+            self.temp[init_group: end_group + 1] = sorted_items
 
-                # update self.group
-                last_index = self.group[index]
+            # if group items order changed, update auxiliary data structures
+            if items != sorted_items:
+                self.unsorted.pop(init_group)
+                len_unsorted = 1
 
-                for current_index in xrange(last_index - 1, last_index - n_items, -1):
-
-                    if group_of_next[self.temp_array[current_index]] != group_of_next[self.temp_array[current_index + 1]]:
-                        self.group[current_index] = current_index
-                        if new_pending_group_items > 1:
-                            self.pending[current_index + 1] = new_pending_group_items
-                        new_pending_group_items = 1
+                # update groups according to new sorting, in a reverse loop
+                # the group of the last item stays the same - so we only update
+                # others
+                for index in xrange(end_group - 1, init_group - 1, -1):
+                    current_suffix = self.temp[index]
+                    next_suffix = self.temp[index + 1]
+                    if next_char[current_suffix] != next_char[next_suffix]:
+                        current_group = index
+                        if len_unsorted > 1:
+                            self.unsorted[index + 1] = len_unsorted  # FIXME (+1)
+                            len_unsorted = 1
                     else:
-                        self.group[current_index] = self.group[current_index + 1]
-                        new_pending_group_items += 1
+                        # current_group stays the same of the following suffix
+                        len_unsorted += 1
 
-                    self.group_by_index[self.temp_array[current_index]] = self.group[current_index]
+                    #self.group_by_temp_index[index] = current_group
+                    self.group_by_text_index[current_suffix] = current_group
 
-                    if new_pending_group_items > 1:
-                        self.pending[current_index] = new_pending_group_items
+                    if len_unsorted > 1:
+                        self.unsorted[index] = len_unsorted
 
-                    self.group_by_index[self.temp_array[current_index]] = self.group[current_index]
-
-        self._index *= 2
+        self._delta *= 2
 
 
     def process(self):
-        self.phase1()
-        while self.pending:
-            self.phase2()
-        return self.temp_array
+        self.setup()
+        while self.unsorted:
+            self.iterate()
+        return self.temp
