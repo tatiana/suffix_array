@@ -87,7 +87,7 @@ class SuffixArray(object):
                             self.unsorted[index + 1] = len_unsorted  # FIXME (+1)
                             len_unsorted = 1
                     else:
-                        # current_group stays the same of the following suffix
+                        current_group = self.group_by_text_index[next_suffix]
                         len_unsorted += 1
 
                     #self.group_by_temp_index[index] = current_group

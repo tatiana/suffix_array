@@ -1,7 +1,7 @@
 # coding: utf-8
 import unittest
 
-from suffix import SuffixArray
+from suffix import SuffixArray, DOLLAR
 
 
 class TestSuffixArray(unittest.TestCase):
@@ -13,7 +13,7 @@ class TestSuffixArray(unittest.TestCase):
         expected = {
             'b': [2, 11],
             'e': [3, 12],
-            '\x00': [13],
+            DOLLAR: [13],
             'o': [1, 4, 7, 10],
             'n': [6],
             'r': [5],
@@ -133,7 +133,7 @@ class TestSuffixArray(unittest.TestCase):
         self.assertEqual(
             self.suffix_array.process(),
             [13, 11, 2, 12, 3, 6, 10, 1, 4, 7, 5, 9, 0, 8]
-        )
+       )
 
     # def test_world(self):
     #     import time
