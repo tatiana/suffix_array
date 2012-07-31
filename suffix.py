@@ -2,7 +2,7 @@ class SuffixArray(object):
     def __init__(self, text):
         self._index = 1
 
-        self.text = "%s$" % text
+        self.text = "%s%s" % (text, chr(0))
         self.temp_array = []  # suffix array wanna be
         self.group = []  # values based on self.temp_array order
         self.group_dict = {}  # letter of group: list of indexes
@@ -45,7 +45,11 @@ class SuffixArray(object):
             group_of_next = {}
             array = self.temp_array[index: index + n_items]
             for value in array:
-                group_of_next[value] = self.group_by_index[value + self._index]
+                try:
+                    group_of_next[value] = self.group_by_index[value + self._index]
+                except IndexError:
+                    import pdb; pdb.set_trace()
+                    #group_of_next[value] = 0
             sorted_items = sorted(group_of_next, key=group_of_next.get)
             self.temp_array[index: index + n_items] = sorted_items
 

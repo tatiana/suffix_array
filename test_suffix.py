@@ -13,7 +13,7 @@ class TestSuffixArray(unittest.TestCase):
         expected = {
             'b': [2, 11],
             'e': [3, 12],
-            '$': [13],
+            '\x00': [13],
             'o': [1, 4, 7, 10],
             'n': [6],
             'r': [5],
@@ -123,6 +123,18 @@ class TestSuffixArray(unittest.TestCase):
             self.suffix_array.process(),
             [13, 11, 2, 12, 3, 6, 10, 1, 4, 7, 5, 9, 0, 8]
         )
+
+    # def test_world(self):
+    #     import time
+    #     i = time.time()
+    #     fp = open("corpus/world192.txt")
+    #     f = time.time()
+    #     text = fp.read()
+    #     print "read time:", (f - i)
+    #     self.suffix_array = SuffixArray(text)
+    #     self.suffix_array.process()
+    #     print "process time:", (f - i)
+
 
 if __name__ == "__main__":
     unittest.main()
