@@ -9,4 +9,4 @@ setup:
 
 test: clean
 	@echo "Running all tests..."
-	@nosetests -s --with-coverage --cover-erase --cover-inclusive --cover-package=suffix_array --tests=tests
+	@nosetests -s --with-coverage --cover-erase --cover-inclusive --cover-package=suffix_array,benchmark --tests=tests
