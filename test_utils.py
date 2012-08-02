@@ -1,5 +1,5 @@
 import unittest
-from utils import binary_search, substring_binary_search  #, suffix_binary_search
+from utils import binary_search, substring_binary_search, suffix_binary_search
 
 
 class BinarySearchTestCase(unittest.TestCase):
@@ -106,17 +106,47 @@ class SubstringBinarySearchTestCase(unittest.TestCase):
         self.assertEquals(computed, expected)
 
 
-# class SuffixArrayBinarySearchTestCase(unittest.TestCase):
+class SuffixArrayBinarySearchTestCase(unittest.TestCase):
 
-#     def test_suffix_binary_search_abracadabra_contains_cada(self):
-#         text = "abracadabra$"
-#         suffix_array = [12, 11, 8, 1, 4, 6, 9, 2, 5, 7, 10, 3]
-#         substring = "cada"
-#         expected = 4
-#         computed = substring_binary_search(text, suffix_array, substring)
-#         self.assertEquals(computed, expected)
+    def test_suffix_binary_search_abracadabra_contains_cada(self):
+        text = "abracadabra$"
+        suffix_array = [12, 11, 8, 1, 4, 6, 9, 2, 5, 7, 10, 3]
+        substring = "cada"
+        expected = 4
+        computed = suffix_binary_search(text, suffix_array, substring)
+        self.assertEquals(computed, expected)
 
+    def test_suffix_binary_search_abracadabra_doesnt_contain_abrax(self):
+        text = "abracadabra$"
+        suffix_array = [12, 11, 8, 1, 4, 6, 9, 2, 5, 7, 10, 3]
+        substring = "abrax"
+        expected = -1
+        computed = suffix_binary_search(text, suffix_array, substring)
+        self.assertEquals(computed, expected)
 
+    def test_suffix_binary_search_tobeornottobe_contains_tobe(self):
+        text = "tobeornottobe$"
+        suffix_array = [13, 11, 2, 12, 3, 6, 10, 1, 4, 7, 5, 9, 0, 8]
+        substring = "tobe"
+        expected = 9
+        computed = suffix_binary_search(text, suffix_array, substring)
+        self.assertEquals(computed, expected)
+
+    def test_suffix_binary_search_tobeornottobe_doesnt_contain_abc(self):
+        text = "tobeornottobe$"
+        suffix_array = [13, 11, 2, 12, 3, 6, 10, 1, 4, 7, 5, 9, 0, 8]
+        substring = "abc"
+        expected = -1
+        computed = suffix_binary_search(text, suffix_array, substring)
+        self.assertEquals(computed, expected)
+
+    def test_suffix_binary_search_tobeornottobe_contains_tobeornottobe(self):
+        text = "tobeornottobe$"
+        suffix_array = [13, 11, 2, 12, 3, 6, 10, 1, 4, 7, 5, 9, 0, 8]
+        substring = "tobeornottobe$"
+        expected = 0
+        computed = suffix_binary_search(text, suffix_array, substring)
+        self.assertEquals(computed, expected)
 
 if __name__ == "__main__":
     unittest.main()
