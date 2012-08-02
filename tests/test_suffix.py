@@ -181,75 +181,75 @@ class TestAbracadabraSuffixArray(unittest.TestCase):
             self.suffix_array.group_by_text_index
         )
 
-    # def test_abracadabra_iterate1(self):
-    #     expected = {
-    #         #         [0,   1,  2,  3,  4, 5, 6, 7,  8,  9, 10, 11]
-    #         'temp':   [11, 10,  0,  7,  3, 5, 1, 8,  4,  6,  2,  9],
-    #         'group':  [0,   1,  3,  3,  4, 5, 7, 7,  8,  9, 11, 11],
-    #         'gindex': [3,   7, 11,  4,  8, 5, 9, 3,  7, 11,  1,  0],
-    #         'unsorted': {2: 2, 6: 2, 10: 2},
-    #     }
-    #     self.suffix_array.setup()
-    #     self.suffix_array.iterate()
-    #     self.assertEqual(
-    #         expected['temp'],
-    #         self.suffix_array.temp
-    #     )
-    #     self.assertEqual(
-    #         expected['group'],
-    #         self.suffix_array.group_by_temp_index
-    #     )
-    #     self.assertEqual(
-    #         expected['unsorted'],
-    #         self.suffix_array.unsorted
-    #     )
-    #     self.assertEqual(
-    #         expected['gindex'],
-    #         self.suffix_array.group_by_text_index
-    #     )
+    def test_abracadabra_iterate1(self):
+        expected = {  # a   b   r   a   c   a   d   a   b   r   a   $
+            #         [ 0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11]
+            'temp':   [11, 10,  0,  7,  3,  5,  1,  8,  4,  6,  2,  9],
+            'group':  [ 0,  1,  3,  3,  4,  5,  7,  7,  8,  9, 11, 11],
+            'gindex': [ 3,  7, 11,  4,  8,  5,  9,  3,  7, 11,  1,  0],
+            'unsorted': {2: 2, 6: 2, 10: 2},
+        }
+        self.suffix_array.setup()
+        self.suffix_array.iterate()
+        self.assertEqual(
+            expected['temp'],
+            self.suffix_array.temp
+        )
+        self.assertEqual(
+            expected['group'],
+            self.suffix_array.group_by_temp_index
+        )
+        self.assertEqual(
+            expected['unsorted'],
+            self.suffix_array.unsorted
+        )
+        self.assertEqual(
+            expected['gindex'],
+            self.suffix_array.group_by_text_index
+        )
 
     # TODO: uncomment me
-    # def test_abracadabra_iterate2(self):
-    #     #text = 'abracadabra'
-    #     #       '01234567890'
-    #     # 11  $   0
-    #     # 10  a$  0
-    #     # 7   abra$   1
-    #     # 0   abracadabra$    4
-    #     # 3   acadabra$   1
-    #     # 5   adabra$ 1
-    #     # 8   bra$    0
-    #     # 1   bracadabra$ 3
-    #     # 4   cadabra$    0
-    #     # 6   dabra$  0
-    #     # 9  ra$ 0
-    #     # 2   racadabra$  2
-    #     expected = {
-    #         #         [0,   1,  2,  3,  4, 5, 6, 7,  8,  9, 10, 11]
-    #         'temp':   [11, 10,  0,  7,  3, 5, 1, 8,  4,  6,  9,  2],
-    #         'group':  [0,   1,  3,  3,  4, 5, 7, 7,  8,  9, 10, 11],
-    #         'gindex': [3,   7, 11,  4,  8, 5, 9, 3,  7, 10,  1,  0],
-    #         'unsorted': {2: 2, 6: 2},
-    #     }
-    #     self.suffix_array.setup()
-    #     self.suffix_array.iterate()
-    #     self.suffix_array.iterate()
-    #     self.assertEqual(
-    #         expected['temp'],
-    #         self.suffix_array.temp
-    #     )
-    #     self.assertEqual(
-    #         expected['group'],
-    #         self.suffix_array.group_by_temp_index
-    #     )
-    #     self.assertEqual(
-    #         expected['unsorted'],
-    #         self.suffix_array.unsorted
-    #     )
-    #     self.assertEqual(
-    #         expected['gindex'],
-    #         self.suffix_array.group_by_text_index
-    #     )
+    def test_abracadabra_iterate2(self):
+        #text = 'abracadabra'
+        #       '01234567890'
+        # 11  $   0
+        # 10  a$  0
+        # 7   abra$   1
+        # 0   abracadabra$    4
+        # 3   acadabra$   1
+        # 5   adabra$ 1
+        # 8   bra$    0
+        # 1   bracadabra$ 3
+        # 4   cadabra$    0
+        # 6   dabra$  0
+        # 9  ra$ 0
+        # 2   racadabra$  2
+        expected = {  # a   b   r   a   c   a   d   a   b   r   a   $
+            #         [ 0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11]
+            'temp':   [11, 10,  0,  7,  3,  5,  8,  1,  4,  6,  9,  2],
+            'group':  [ 0,  1,  3,  3,  4,  5,  6,  7,  8,  9, 10, 11],
+            'gindex': [ 3,  7, 11,  4,  8,  5,  9,  3,  6, 10,  1,  0],
+            'unsorted': {2: 2},
+        }
+        self.suffix_array.setup()
+        self.suffix_array.iterate()
+        self.suffix_array.iterate()
+        self.assertEqual(
+            expected['temp'],
+            self.suffix_array.temp
+        )
+        self.assertEqual(
+            expected['group'],
+            self.suffix_array.group_by_temp_index
+        )
+        self.assertEqual(
+            expected['unsorted'],
+            self.suffix_array.unsorted
+        )
+        self.assertEqual(
+            expected['gindex'],
+            self.suffix_array.group_by_text_index
+        )
 
 
     # TODO: write test for iterate3
