@@ -12,7 +12,7 @@ class SuffixArray(object):
         # [suffix_first_char] => list of suffixes (represented by first pos)
         # by convention, groups are represented by last group item's index
 
-        #self.group_by_temp_index = []
+        self.group_by_temp_index = []
         # [index in temp] => group (represented by last item pos)
         # by convention, groups are represented by last group item's index
         # TODO: Delete me!
@@ -50,29 +50,35 @@ class SuffixArray(object):
             for init_suffix in bucket_items:  # O(m) where m = # items of bucket
                 group = end_bucket
                 self.group_by_text_index[init_suffix] = group
-                #self.group_by_temp_index.append(group)  # TODO: Delete me!
+                self.group_by_temp_index.append(group)  # TODO: Delete me!
             index += len_bucket
             self.temp += bucket_items
 
     def iterate(self):
         "Improve sorting based on the next char of each suffix: O(n)"
-
+        new_unsorted = {}
+        original_group_by_text_index = self.group_by_text_index[:]
         # for each unsorted group of suffixes, try to sort by next char's group
+        #print "delta:", self._delta
+        #print "size:", sum([len_group for init_group, len_group in self.unsorted.items()])
         for init_group, len_group in self.unsorted.items():
             next_char = {}
             items = self.temp[init_group: init_group + len_group]
+            #if 1 in items and 8 in items: import pdb; pdb.set_trace()
+
             for init_suffix in items:
                 index = init_suffix
-                next_char[index] = self.group_by_text_index[index + self._delta]
+                next_char[index] = original_group_by_text_index[index + self._delta]
 
             # sort group suffixes by next char and update self.temp
             end_group = init_group + len_group - 1
-            sorted_items = sorted(next_char, key=next_char.get)  # O(m.log(m))
+            sorted_items = sorted(next_char.items(), key=lambda x: (x[1], x[0]))
+            sorted_items = [i[0] for i in sorted_items]
             self.temp[init_group: end_group + 1] = sorted_items
 
             # if group items order changed, update auxiliary data structures
             if items != sorted_items:
-                self.unsorted.pop(init_group)
+                #self.unsorted.pop(init_group)
                 len_unsorted = 1
 
                 # update groups according to new sorting, in a reverse loop
@@ -84,18 +90,28 @@ class SuffixArray(object):
                     if next_char[current_suffix] != next_char[next_suffix]:
                         current_group = index
                         if len_unsorted > 1:
-                            self.unsorted[index + 1] = len_unsorted  # FIXME (+1)
+                            new_unsorted[index + 1] = len_unsorted
+                            #self.unsorted[index + 1] = len_unsorted  # FIXME (+1)
                             len_unsorted = 1
                     else:
                         current_group = self.group_by_text_index[next_suffix]
                         len_unsorted += 1
 
-                    #self.group_by_temp_index[index] = current_group
+                    #import pdb; pdb.set_trace()
+                    # FIXME
+                    # print [original_group_by_text_index[i] for i in [3, 10]], [self.group_by_text_index[i] for i in [3, 10]
+                    # problem is here - we are setting some wrong value for
+                    # self.group_by_text_index
+                    self.group_by_temp_index[index] = current_group
                     self.group_by_text_index[current_suffix] = current_group
 
                     if len_unsorted > 1:
-                        self.unsorted[index] = len_unsorted
+                        #self.unsorted[index] = len_unsorted
+                        new_unsorted[index] = len_unsorted
+            else:
+                new_unsorted[init_group] = len_group
 
+        self.unsorted = new_unsorted
         self._delta *= 2
 
 
@@ -104,3 +120,15 @@ class SuffixArray(object):
         while self.unsorted:
             self.iterate()
         return self.temp
+
+
+if __name__ == "__main__":
+    import time
+    i = time.time()
+    fp = open("corpus/world192.txt")
+    f = time.time()
+    text = fp.read()
+    print "read time:", (f - i)
+    suffix_array = SuffixArray(text)
+    suffix_array.process()
+    print "process time:", (f - i)
