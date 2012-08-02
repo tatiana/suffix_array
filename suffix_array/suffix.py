@@ -61,7 +61,8 @@ class SuffixArray(object):
         # for each unsorted group of suffixes, try to sort by next char's group
         #print "delta:", self._delta
         #print "size:", sum([len_group for init_group, len_group in self.unsorted.items()])
-        for init_group, len_group in self.unsorted.items():
+        unsorted_items = sorted(self.unsorted.items())
+        for init_group, len_group in unsorted_items:
             next_char = {}
             items = self.temp[init_group: init_group + len_group]
             #if 1 in items and 8 in items: import pdb; pdb.set_trace()
