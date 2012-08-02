@@ -1,5 +1,6 @@
 import unittest
-from utils import binary_search, substring_binary_search, suffix_binary_search
+from suffix_array.search import binary_search, substring_binary_search, \
+    suffix_binary_search
 
 
 class BinarySearchTestCase(unittest.TestCase):

@@ -1,5 +1,3 @@
-
-
 def binary_search(array, value):
     begin = 0
     end = len(array)

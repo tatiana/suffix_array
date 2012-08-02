@@ -1,7 +1,7 @@
 # coding: utf-8
 import unittest
 
-from suffix import SuffixArray, DOLLAR
+from suffix_array.suffix import SuffixArray, DOLLAR
 
 
 class TestToBeOrNotToBeSuffixArray(unittest.TestCase):
