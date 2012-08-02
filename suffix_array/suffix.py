@@ -57,19 +57,20 @@ class SuffixArray(object):
     def iterate(self):
         "Improve sorting based on the next char of each suffix: O(n)"
         new_unsorted = {}
-        original_group_by_text_index = self.group_by_text_index[:]
+        previous_group_by_text_index = self.group_by_text_index[:]
         # for each unsorted group of suffixes, try to sort by next char's group
-        #print "delta:", self._delta
-        #print "size:", sum([len_group for init_group, len_group in self.unsorted.items()])
-        unsorted_items = sorted(self.unsorted.items())
+        print "delta:", self._delta
+        print "size:", sum([len_group for init_group, len_group in self.unsorted.items()])
+        unsorted_items = sorted(self.unsorted.items(), reverse=True)
         for init_group, len_group in unsorted_items:
+            #if self._delta == 2: import pdb; pdb.set_trace()
             next_char = {}
             items = self.temp[init_group: init_group + len_group]
             #if 1 in items and 8 in items: import pdb; pdb.set_trace()
 
             for init_suffix in items:
                 index = init_suffix
-                next_char[index] = original_group_by_text_index[index + self._delta]
+                next_char[index] = previous_group_by_text_index[index + self._delta]
 
             # sort group suffixes by next char and update self.temp
             end_group = init_group + len_group - 1
@@ -77,40 +78,29 @@ class SuffixArray(object):
             sorted_items = [i[0] for i in sorted_items]
             self.temp[init_group: end_group + 1] = sorted_items
 
-            # if group items order changed, update auxiliary data structures
-            if items != sorted_items:
-                #self.unsorted.pop(init_group)
-                len_unsorted = 1
+            # update auxiliary data structures
+            len_unsorted = 1
 
-                # update groups according to new sorting, in a reverse loop
-                # the group of the last item stays the same - so we only update
-                # others
-                for index in xrange(end_group - 1, init_group - 1, -1):
-                    current_suffix = self.temp[index]
-                    next_suffix = self.temp[index + 1]
-                    if next_char[current_suffix] != next_char[next_suffix]:
-                        current_group = index
-                        if len_unsorted > 1:
-                            new_unsorted[index + 1] = len_unsorted
-                            #self.unsorted[index + 1] = len_unsorted  # FIXME (+1)
-                            len_unsorted = 1
-                    else:
-                        current_group = self.group_by_text_index[next_suffix]
-                        len_unsorted += 1
-
-                    #import pdb; pdb.set_trace()
-                    # FIXME
-                    # print [original_group_by_text_index[i] for i in [3, 10]], [self.group_by_text_index[i] for i in [3, 10]
-                    # problem is here - we are setting some wrong value for
-                    # self.group_by_text_index
-                    self.group_by_temp_index[index] = current_group
-                    self.group_by_text_index[current_suffix] = current_group
-
+            # update groups according to new sorting, in a reverse loop
+            # the group of the last item stays the same - so we only update
+            # others
+            for index in xrange(end_group - 1, init_group - 1, -1):
+                current_suffix = self.temp[index]
+                next_suffix = self.temp[index + 1]
+                if next_char[current_suffix] != next_char[next_suffix]:
+                    current_group = index
                     if len_unsorted > 1:
-                        #self.unsorted[index] = len_unsorted
-                        new_unsorted[index] = len_unsorted
-            else:
-                new_unsorted[init_group] = len_group
+                        new_unsorted[index + 1] = len_unsorted
+                        len_unsorted = 1
+                else:
+                    current_group = self.group_by_text_index[next_suffix]
+                    len_unsorted += 1
+
+                self.group_by_temp_index[index] = current_group
+                self.group_by_text_index[current_suffix] = current_group
+
+                if len_unsorted > 1:
+                    new_unsorted[index] = len_unsorted
 
         self.unsorted = new_unsorted
         self._delta *= 2
@@ -126,7 +116,7 @@ class SuffixArray(object):
 if __name__ == "__main__":
     import time
     i = time.time()
-    fp = open("corpus/bible.txt")
+    fp = open("corpus/world192.txt")
     f = time.time()
     text = fp.read()
     print "read time:", (f - i)

@@ -266,34 +266,84 @@ class TestSeq_1_13_SuffixArray(unittest.TestCase):
         text = '12345678910111213'
         self.suffix_array = SuffixArray(text)
 
-    def test_12345678910111213(self):
-        #       1   2   3   4   5   6   7   8   9   1   0   1   1   1   2   1   3   $
-        #
-        # Delta = 1:
-        # t:  [17, 10,  0,  9, 11, 12, 13, 15,  1, 14,  2, 16,  3,  4,  5,  6,  7,  8]
-        # gt: [ 0,  1,  7,  7,  7,  7,  7,  7,  9,  9, 11, 11, 12, 13, 14, 15, 16, 17]
-        # gi: [ 7,  9, 11, 12, 13, 14, 15, 16, 17,  7,  1,  7,  7,  7,  9,  7, 11,  0]
-        # un: {2: 6, 8: 2, 10: 2}
-        #
-        # Delta = 2:
-        # t:  [17, 10,  9, 11, 12,  0, 13, 15, 14,  1, 16,  2,  3,  4,  5,  6,  7,  8]
-        # gt: [ 0,  1,  2,  4,  4,  6,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17]
-        # gi: [ 6,  9, 11, 12, 13, 14, 15, 16, 17,  2,  1,  4,  4,  6,  8,  7, 10,  0]
-        # un: {3: 2, 5: 2}
-        #
-        # Delta = 4:
-        # t:  [17, 10,  9, 11, 12, 13,  0, 15, 14,  1, 16,  2,  3,  4,  5,  6,  7,  8]
-        # gt: [ 0,  1,  2,  4,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17]
-        #                  ^^^^^^^^
-        # gi: [ 6,  9, 11, 12, 13, 14, 15, 16, 17,  2,  1,  4,  4,  5,  8,  7, 10,  0]
-        #                                                  ^^^^^^^^
-        # un: {3: 2}
-        #     ^^^^^^
+    def test_12345678910111213_setup(self):
+        expected = {
+             'temp':   [17, 10,  0,  9, 11, 12, 13, 15,  1, 14,  2, 16,  3,  4,  5,  6,  7,  8],
+             'group':  [0,   1,  7,  7,  7,  7,  7,  7,  9,  9, 11, 11, 12, 13, 14, 15, 16, 17],
+             'gindex': [7,   9, 11, 12, 13, 14, 15, 16, 17,  7,  1,  7,  7,  7,  9,  7, 11,  0],
+             'unsorted': {2: 6, 8: 2, 10: 2}
+        }
+        self.suffix_array.setup()
+        self.assertEqual(
+            expected['temp'],
+            self.suffix_array.temp
+        )
+        self.assertEqual(
+            expected['group'],
+            self.suffix_array.group_by_temp_index
+        )
+        self.assertEqual(
+            expected['unsorted'],
+            self.suffix_array.unsorted
+        )
+        self.assertEqual(
+            expected['gindex'],
+            self.suffix_array.group_by_text_index
+        )
 
+    def test_12345678910111213_iterate1(self):
+        expected = {
+             'temp':   [17, 10,  9, 11, 12,  0, 13, 15, 14,  1, 16,  2,  3,  4,  5,  6,  7,  8],
+             'group':  [0,   1,  2,  4,  4,  6,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17],
+             'gindex': [6,   9, 11, 12, 13, 14, 15, 16, 17,  2,  1,  4,  4,  6,  8,  7, 10,  0],
+             'unsorted': {3: 2, 5: 2}
+        }
+        self.suffix_array.setup()
+        self.suffix_array.iterate()
+        self.assertEqual(
+            expected['temp'],
+            self.suffix_array.temp
+        )
+        self.assertEqual(
+            expected['group'],
+            self.suffix_array.group_by_temp_index
+        )
+        self.assertEqual(
+            expected['unsorted'],
+            self.suffix_array.unsorted
+        )
+        self.assertEqual(
+            expected['gindex'],
+            self.suffix_array.group_by_text_index
+        )
+
+    def test_12345678910111213_iterate2(self):
+        expected = {
+             'temp':   [17, 10,  9, 11, 12,  13, 0, 15, 14,  1, 16,  2,  3,  4,  5,  6,  7,  8],
+             'group':  [0,   1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17],
+             'gindex': [6,   9, 11, 12, 13, 14, 15, 16, 17,  2,  1,  3,  4,  5,  8,  7, 10,  0],
+             'unsorted': {}
+        }
         self.suffix_array.setup()
         self.suffix_array.iterate()
         self.suffix_array.iterate()
-        self.suffix_array.iterate()
+        self.assertEqual(
+            expected['temp'],
+            self.suffix_array.temp
+        )
+        self.assertEqual(
+            expected['group'],
+            self.suffix_array.group_by_temp_index
+        )
+        self.assertEqual(
+            expected['unsorted'],
+            self.suffix_array.unsorted
+        )
+        self.assertEqual(
+            expected['gindex'],
+            self.suffix_array.group_by_text_index
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
