@@ -1,5 +1,5 @@
 import unittest
-from utils import binary_search
+from utils import binary_search, substring_binary_search  #, suffix_binary_search
 
 
 class BinarySearchTestCase(unittest.TestCase):
@@ -66,6 +66,57 @@ class BinarySearchTestCase(unittest.TestCase):
         expected = 3
         computed = binary_search(array, value)
         self.assertEquals(computed, expected)
+
+
+class SubstringBinarySearchTestCase(unittest.TestCase):
+
+    def test_substring_binary_search_empty_text(self):
+        text = ""
+        substring = "$"
+        expected = -1
+        computed = substring_binary_search(text, substring)
+        self.assertEquals(computed, expected)
+
+    def test_substring_binary_search_with_1_char_substring(self):
+        text = "abc"
+        substring = "c"
+        expected = 2
+        computed = substring_binary_search(text, substring)
+        self.assertEquals(computed, expected)
+
+    def test_substring_binary_search_without_1_char_substring(self):
+        text = "abc"
+        substring = "d"
+        expected = -1
+        computed = substring_binary_search(text, substring)
+        self.assertEquals(computed, expected)
+
+    def test_substring_binary_search_with_2_chars_substring(self):
+        text = "defg"
+        substring = "ef"
+        expected = 1
+        computed = substring_binary_search(text, substring)
+        self.assertEquals(computed, expected)
+
+    def test_substring_binary_search_without_2_chars_substring(self):
+        text = "hijk"
+        substring = "lmn"
+        expected = -1
+        computed = substring_binary_search(text, substring)
+        self.assertEquals(computed, expected)
+
+
+# class SuffixArrayBinarySearchTestCase(unittest.TestCase):
+
+#     def test_suffix_binary_search_abracadabra_contains_cada(self):
+#         text = "abracadabra$"
+#         suffix_array = [12, 11, 8, 1, 4, 6, 9, 2, 5, 7, 10, 3]
+#         substring = "cada"
+#         expected = 4
+#         computed = substring_binary_search(text, suffix_array, substring)
+#         self.assertEquals(computed, expected)
+
+
 
 if __name__ == "__main__":
     unittest.main()
