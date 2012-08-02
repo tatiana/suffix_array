@@ -208,7 +208,6 @@ class TestAbracadabraSuffixArray(unittest.TestCase):
             self.suffix_array.group_by_text_index
         )
 
-    # TODO: uncomment me
     def test_abracadabra_iterate2(self):
         #text = 'abracadabra'
         #       '01234567890'
@@ -254,11 +253,11 @@ class TestAbracadabraSuffixArray(unittest.TestCase):
 
     # TODO: write test for iterate3
 
-    #def test_tobeornottobe(self):
-    #     self.assertEqual(
-    #         self.suffix_array.process(),
-    #         [13, 11, 2, 12, 3, 6, 10, 1, 4, 7, 5, 9, 0, 8]
-    #    )
+    def test_abracadabra(self):
+        self.assertEqual(
+            self.suffix_array.process(),
+            [11, 10, 7, 0, 3, 5, 8, 1, 4, 6, 9, 2]
+       )
 
 
 if __name__ == "__main__":
