@@ -40,4 +40,4 @@ if __name__ == "__main__":
     for i in xrange(1, 11):
         item_size = substring_size(i)
         dataset[i] = get_random_substring_list(text, LIST_SIZE, item_size)
-    import pdb; pdb.set_trace()
+    # result in dataset \o/

@@ -126,7 +126,7 @@ class SuffixArray(object):
 if __name__ == "__main__":
     import time
     i = time.time()
-    fp = open("corpus/world192.txt")
+    fp = open("corpus/bible.txt")
     f = time.time()
     text = fp.read()
     print "read time:", (f - i)

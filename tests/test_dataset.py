@@ -56,7 +56,3 @@ class DatasetTestCase(unittest.TestCase):
         self.assertTrue(computed_list[0] in text)
         self.assertTrue(computed_list[1] in text)
         self.assertTrue(computed_list[2] in text)
-
-
-
-
