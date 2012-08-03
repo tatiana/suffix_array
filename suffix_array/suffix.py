@@ -59,19 +59,17 @@ class SuffixArray(object):
         new_unsorted = {}
         previous_group_by_text_index = self.group_by_text_index[:]
         # for each unsorted group of suffixes, try to sort by next char's group
-        #print "delta:", self._delta
-        #print "size:", sum([len_group for init_group, len_group in self.unsorted.items()])
+        print "delta:", self._delta
+        print "size:", sum([len_group for init_group, len_group in self.unsorted.items()])
         unsorted_items = sorted(self.unsorted.items(), reverse=True)
         for init_group, len_group in unsorted_items:
-            #if self._delta == 2: import pdb; pdb.set_trace()
+
             next_char = {}
             items = self.temp[init_group: init_group + len_group]
-            #if 1 in items and 8 in items: import pdb; pdb.set_trace()
 
             for init_suffix in items:
                 index = init_suffix
                 next_char[index] = previous_group_by_text_index[index + self._delta]
-
             # sort group suffixes by next char and update self.temp
             end_group = init_group + len_group - 1
             sorted_items = sorted(next_char.items(), key=lambda x: (x[1], x[0]))
@@ -84,6 +82,7 @@ class SuffixArray(object):
             # update groups according to new sorting, in a reverse loop
             # the group of the last item stays the same - so we only update
             # others
+
             for index in xrange(end_group - 1, init_group - 1, -1):
                 current_suffix = self.temp[index]
                 next_suffix = self.temp[index + 1]
@@ -99,8 +98,8 @@ class SuffixArray(object):
                 self.group_by_temp_index[index] = current_group
                 self.group_by_text_index[current_suffix] = current_group
 
-                if len_unsorted > 1:
-                    new_unsorted[index] = len_unsorted
+            if len_unsorted > 1:
+                new_unsorted[index] = len_unsorted
 
         self.unsorted = new_unsorted
         self._delta *= 2
@@ -116,10 +115,12 @@ class SuffixArray(object):
 if __name__ == "__main__":
     import time
     i = time.time()
-    fp = open("corpus/world192.txt")
+    fp = open("corpus/bible.txt")
     f = time.time()
     text = fp.read()
-    print "read time:", (f - i)
+    #print "read time:", (f - i)
     suffix_array = SuffixArray(text)
-    suffix_array.process()
-    print "process time:", (f - i)
+    import profile
+    profile.run('suffix_array.process()')
+    i = time.time()
+    #print "process time:", (i - f)

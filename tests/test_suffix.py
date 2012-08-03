@@ -250,9 +250,6 @@ class TestAbracadabraSuffixArray(unittest.TestCase):
             self.suffix_array.group_by_text_index
         )
 
-
-    # TODO: write test for iterate3
-
     def test_abracadabra(self):
         self.assertEqual(
             self.suffix_array.process(),
@@ -344,6 +341,63 @@ class TestSeq_1_13_SuffixArray(unittest.TestCase):
             self.suffix_array.group_by_text_index
         )
 
+
+class Test_1112111_SuffixArray(unittest.TestCase):
+
+    def setUp(self):
+        text = '1112111'
+        self.suffix_array = SuffixArray(text)
+
+    def test_1112111_setup(self):
+        expected = {
+             'temp':   [7, 0, 1, 2, 4, 5, 6, 3],
+             'group':  [0, 6, 6, 6, 6, 6, 6, 7],
+             'gindex': [6, 6, 6, 7, 6, 6, 6, 0],
+             'unsorted': {1: 6}
+        }
+        self.suffix_array.setup()
+        self.assertEqual(
+            expected['temp'],
+            self.suffix_array.temp
+        )
+        self.assertEqual(
+            expected['group'],
+            self.suffix_array.group_by_temp_index
+        )
+        self.assertEqual(
+            expected['unsorted'],
+            self.suffix_array.unsorted
+        )
+        self.assertEqual(
+            expected['gindex'],
+            self.suffix_array.group_by_text_index
+        )
+
+    def test_1112111_iterate1(self):
+        expected = {
+             'temp':   [7, 6, 0, 1, 4, 5, 2, 3],
+             'group':  [0, 1, 5, 5, 5, 5, 6, 7],
+             'gindex': [5, 5, 6, 7, 5, 5, 1, 0],
+             'unsorted': {2: 4}
+        }
+        self.suffix_array.setup()
+        self.suffix_array.iterate()
+        self.assertEqual(
+            expected['temp'],
+            self.suffix_array.temp
+        )
+        self.assertEqual(
+            expected['group'],
+            self.suffix_array.group_by_temp_index
+        )
+        self.assertEqual(
+            expected['unsorted'],
+            self.suffix_array.unsorted
+        )
+        self.assertEqual(
+            expected['gindex'],
+            self.suffix_array.group_by_text_index
+        )
 
 if __name__ == "__main__":
     unittest.main()
