@@ -47,3 +47,13 @@ def suffix_binary_search(text, suffix_array, substring):
         else:
             return index
     return -1
+
+
+def longest_common_preffix(string1, string2):
+    lcp = string1[:[c[0] == c[1] for c in zip(string1, string2)].index(0)]
+    return len(lcp)
+
+
+# def compute_lcp_array(text, suffix_array):
+#     lcp = [None] * len(suffix_array)
+#     for i in len(suffix_array):

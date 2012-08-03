@@ -1,6 +1,6 @@
 import unittest
-from suffix_array.search import binary_search, substring_binary_search, \
-    suffix_binary_search
+from suffix_array.search import binary_search, \
+    longest_common_preffix, substring_binary_search, suffix_binary_search
 
 
 class BinarySearchTestCase(unittest.TestCase):
@@ -148,6 +148,48 @@ class SuffixArrayBinarySearchTestCase(unittest.TestCase):
         expected = 0
         computed = suffix_binary_search(text, suffix_array, substring)
         self.assertEquals(computed, expected)
+
+
+class LCPTestCase(unittest.TestCase):
+
+    def test_longest_common_preffix_python_phrases(self):
+        string1 = 'python rocks'
+        string2 = 'python is cool'
+        response = longest_common_preffix(string1, string2)
+        expected = 7
+        self.assertEquals(response, expected)
+
+    def test_longest_common_preffix_python_phrases_inverted(self):
+        string1 = 'python is cool'
+        string2 = 'python rocks'
+        response = longest_common_preffix(string1, string2)
+        expected = 7
+        self.assertEquals(response, expected)
+
+    def test_nothing_in_common(self):
+        string1 = 'nothing in'
+        string2 = 'common'
+        response = longest_common_preffix(string1, string2)
+        expected = 0
+        self.assertEquals(response, expected)
+
+
+# class LCPArrayTestCase(unittest.TestCase):
+
+#     def test_get_lcp_array_for_abracadabra(self):
+#         text = "abracadabra$"
+#         suffix_array = [12, 11, 8, 1, 4, 6, 9, 2, 5, 7, 10, 3]
+#         lcp_array_expected = [0, 0, 1, 4, 1, 1, 0, 3, 0, 0, 0, 2]
+#         lcp_array_computed = compute_lcp_array(text, suffix_array)
+#         self.assertEquals(lcp_array_computed, lcp_array_expected)
+
+#     def test_get_lcp_array_for_mississipi(self):
+#         text = "mississipi$"
+#         suffix_array = [12, 11, 8, 5, 2, 1, 10, 9, 7, 4, 6, 3]
+#         lcp_array_expected = [0, 0, 1, 1, 4, 0, 0, 1, 0, 2, 1, 3]
+#         lcp_array_computed = compute_lcp_array(text, suffix_array)
+#         self.assertEquals(lcp_array_computed, lcp_array_expected)
+
 
 if __name__ == "__main__":
     unittest.main()

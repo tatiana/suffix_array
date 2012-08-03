@@ -59,8 +59,8 @@ class SuffixArray(object):
         new_unsorted = {}
         previous_group_by_text_index = self.group_by_text_index[:]
         # for each unsorted group of suffixes, try to sort by next char's group
-        print "delta:", self._delta
-        print "size:", sum([len_group for init_group, len_group in self.unsorted.items()])
+        #print "delta:", self._delta
+        #print "size:", sum([len_group for init_group, len_group in self.unsorted.items()])
         unsorted_items = sorted(self.unsorted.items(), reverse=True)
         for init_group, len_group in unsorted_items:
 
@@ -103,7 +103,6 @@ class SuffixArray(object):
 
         self.unsorted = new_unsorted
         self._delta *= 2
-
 
     def process(self):
         self.setup()
