@@ -54,6 +54,14 @@ def longest_common_preffix(string1, string2):
     return len(lcp)
 
 
-# def compute_lcp_array(text, suffix_array):
-#     lcp = [None] * len(suffix_array)
-#     for i in len(suffix_array):
+def compute_lcp_array(text, suffix_array):
+    assert len(text) == len(suffix_array)
+    lcp = [0] * len(suffix_array)
+    n = len(suffix_array)
+    for i in xrange(1, n):
+        index1 = suffix_array[i - 1]
+        index2 = suffix_array[i]
+        lcp[i] = longest_common_preffix(text[index1:], text[index2:])
+
+    return lcp
+

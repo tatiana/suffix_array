@@ -1,5 +1,5 @@
 import unittest
-from suffix_array.search import binary_search, \
+from suffix_array.search import binary_search, compute_lcp_array,\
     longest_common_preffix, substring_binary_search, suffix_binary_search
 
 
@@ -174,21 +174,26 @@ class LCPTestCase(unittest.TestCase):
         self.assertEquals(response, expected)
 
 
-# class LCPArrayTestCase(unittest.TestCase):
+class LCPArrayTestCase(unittest.TestCase):
 
-#     def test_get_lcp_array_for_abracadabra(self):
-#         text = "abracadabra$"
-#         suffix_array = [12, 11, 8, 1, 4, 6, 9, 2, 5, 7, 10, 3]
-#         lcp_array_expected = [0, 0, 1, 4, 1, 1, 0, 3, 0, 0, 0, 2]
-#         lcp_array_computed = compute_lcp_array(text, suffix_array)
-#         self.assertEquals(lcp_array_computed, lcp_array_expected)
+    def test_get_lcp_array_for_abracadabra(self):
+        text = "abracadabra$"
+        suffix_array = [11, 10, 7, 0, 3, 5, 8, 1, 4, 6, 9, 2]
+        lcp_array_expected = [0, 0, 1, 4, 1, 1, 0, 3, 0, 0, 0, 2]
+        lcp_array_computed = compute_lcp_array(text, suffix_array)
+        self.assertEquals(lcp_array_computed, lcp_array_expected)
 
-#     def test_get_lcp_array_for_mississipi(self):
-#         text = "mississipi$"
-#         suffix_array = [12, 11, 8, 5, 2, 1, 10, 9, 7, 4, 6, 3]
-#         lcp_array_expected = [0, 0, 1, 1, 4, 0, 0, 1, 0, 2, 1, 3]
-#         lcp_array_computed = compute_lcp_array(text, suffix_array)
-#         self.assertEquals(lcp_array_computed, lcp_array_expected)
+    def test_get_lcp_array_for_mississipi(self):
+        text = "mississippi$"
+        suffix_array = [11, 10, 7, 4, 1, 0, 9, 8, 6, 3, 5, 2]
+        lcp_array_expected = [0, 0, 1, 1, 4, 0, 0, 1, 0, 2, 1, 3]
+        lcp_array_computed = compute_lcp_array(text, suffix_array)
+        self.assertEquals(lcp_array_computed, lcp_array_expected)
+
+    def test_get_lcp_array_raises_exception_if_wrong_input(self):
+        text = "wrong input text"
+        suffixes = []
+        self.assertRaises(AssertionError, compute_lcp_array, text, suffixes)
 
 
 if __name__ == "__main__":
