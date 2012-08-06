@@ -19,18 +19,19 @@ fp.close()
 #     item_size = substring_size(i)
 #     dataset_dict[i] = get_random_substring_list(text, LIST_SIZE, item_size)
 #     #dataset = get_random_substring_list(text, LIST_SIZE, item_size)
-def main():
-    fp = open("bible_dataset_dict.pck", "r")
-    dataset_dict = pickle.load(fp)
-    fp.close()
+fp = open("bible_dataset_dict.pck", "r")
+dataset_dict = pickle.load(fp)
+fp.close()
 
+
+def main():
     sorted_keys = sorted(dataset_dict.keys())
-    for key in [sorted_keys[0]]:
+    for key in [sorted_keys[1]]:
         print "######################"
         print "key: ", key
         total_time = 0
         dataset = dataset_dict[key]
-        for substring in dataset:
+        for substring in dataset[:200]:
             i = time.time()
             print substring
             answer = lcp_search(text, suffix_array, substring)
@@ -40,8 +41,14 @@ def main():
             total_time += f - i
 
 
-import profile
-profile.run("main()")
+#import cProfile
+#cProfile.run("main()", "result")
+#import pstats
+#jan = pstats.Stats('result')
+#jan.sort_stats('cumulative').print_stats(10)
+#jan.sort_stats('time').print_stats(10)
+#import pdb; pdb.set_trace()
+main()
     #print "total time: ", total_time
     #print "average time: ", total_time / LIST_SIZE
 # 2468358

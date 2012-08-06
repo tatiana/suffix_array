@@ -1,6 +1,6 @@
 import unittest
 from suffix_array.search import binary_search, compute_lcp_array, lcp_search,\
-    longest_common_preffix, substring_binary_search, suffix_binary_search
+    longest_common_prefix, substring_binary_search, suffix_binary_search
 
 
 class BinarySearchTestCase(unittest.TestCase):
@@ -195,38 +195,38 @@ class SuffixArrayLCPSearchTestCase(unittest.TestCase):
 
 class LCPTestCase(unittest.TestCase):
 
-    def test_longest_common_preffix_empty_string(self):
+    def test_longest_common_prefix_empty_string(self):
         string1 = ''
         string2 = 'other string is empty :/'
-        response = longest_common_preffix(string1, string2)
+        response = longest_common_prefix(string1, string2)
         expected = 0
         self.assertEquals(response, expected)
 
-    def test_longest_common_preffix_different_sizes(self):
+    def test_longest_common_prefix_different_sizes(self):
         string1 = 'cada'
         string2 = 'cadabra$'
-        response = longest_common_preffix(string1, string2)
+        response = longest_common_prefix(string1, string2)
         expected = 4
         self.assertEquals(response, expected)
 
-    def test_longest_common_preffix_python_phrases(self):
+    def test_longest_common_prefix_python_phrases(self):
         string1 = 'python rocks'
         string2 = 'python is cool'
-        response = longest_common_preffix(string1, string2)
+        response = longest_common_prefix(string1, string2)
         expected = 7
         self.assertEquals(response, expected)
 
-    def test_longest_common_preffix_python_phrases_inverted(self):
+    def test_longest_common_prefix_python_phrases_inverted(self):
         string1 = 'python is cool'
         string2 = 'python rocks'
-        response = longest_common_preffix(string1, string2)
+        response = longest_common_prefix(string1, string2)
         expected = 7
         self.assertEquals(response, expected)
 
     def test_nothing_in_common(self):
         string1 = 'nothing in'
         string2 = 'common'
-        response = longest_common_preffix(string1, string2)
+        response = longest_common_prefix(string1, string2)
         expected = 0
         self.assertEquals(response, expected)
 

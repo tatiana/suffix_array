@@ -49,19 +49,28 @@ def suffix_binary_search(text, suffix_array, substring):
     return -1
 
 
-def longest_common_preffix(string1, string2):
+def longest_common_prefix(string1, string2):
+    return longest_common_prefix_by_index(string1, 0, string2, 0)
+    # i = 0
+    # while True:
+    #     try:
+    #         if string1[i] != string2[i]:
+    #             break
+    #     except IndexError:
+    #         break
+    #     i += 1
+    # return i
 
+def longest_common_prefix_by_index(text1, pos1, text2, pos2):
     i = 0
     while True:
         try:
-            if string1[i] != string2[i]:
+            if text1[pos1 + i] != text2[pos2 + i]:
                 break
         except IndexError:
             break
         i += 1
-
     return i
-
 
 def compute_lcp_array(text, suffix_array):
     assert len(text) == len(suffix_array)
@@ -70,11 +79,11 @@ def compute_lcp_array(text, suffix_array):
     for i in xrange(1, n):
         index1 = suffix_array[i - 1]
         index2 = suffix_array[i]
-        lcp[i] = longest_common_preffix(text[index1:], text[index2:])
+        lcp[i] = longest_common_prefix(text[index1:], text[index2:])
 
     return lcp
 
-
+@profile
 def lcp_search(text, suffix_array, substring):
 
     P = substring
@@ -82,12 +91,14 @@ def lcp_search(text, suffix_array, substring):
     l_index = 0
     l_text_index = suffix_array[l_index]
     L = text[l_text_index:]
-    l = longest_common_preffix(L, P)
+    #l = longest_common_prefix(L, P)
+    l = longest_common_prefix_by_index(text, l_text_index, substring, 0)
 
     r_index = len(suffix_array) - 1
     r_text_index = suffix_array[r_index]
     R = text[r_text_index:]
-    r = longest_common_preffix(R, P)
+    #r = longest_common_prefix(R, P)
+    r = longest_common_prefix_by_index(text, r_text_index, substring, 0)
 
     m_index = -1
 
@@ -99,19 +110,10 @@ def lcp_search(text, suffix_array, substring):
         m_index = new_m_index
         m_text_index = suffix_array[m_index]
         M = text[m_text_index:]
-        #if (l_index, m_index, r_index, l, r) == (3920911, 3952531, 3984151, 0, 1):
-        #    import pdb; pdb.set_trace()
-        #if text == "tobeornottobe$" and substring == "tobeornottobe$" and (9, 11, 13, 0, 1) == (l_index, m_index, r_index, l, r):
-        #    import pdb; pdb.set_trace()
-        #if (2403139, 2466379, 2529620, 1, 0) == (l_index, m_index, r_index, l, r):
-        #    import pdb; pdb.set_trace()
-        # 2468358
-
-
-
         # case 1
         if l == r:
-            lcp = longest_common_preffix(P[l:], M[l:])
+            lcp = longest_common_prefix_by_index(substring, l, text, m_text_index + l)
+            #lcp = longest_common_prefix(P[l:], M[l:])
 
             j = lcp + l  # 0 first mismatch
 
@@ -122,27 +124,35 @@ def lcp_search(text, suffix_array, substring):
             if M[mismatch_index] < P[mismatch_index]:  # lower half
                 L = M
                 l_index = m_index
+                l_text_index = m_text_index
                 l = j
             else:  # P[mismatch_index] < M[mismatch_index]:  # upper half
                 R = M
                 r_index = m_index
+                r_text_index = m_text_index
                 r = j
 
         # case 2
         elif l > r:
-            lcp = longest_common_preffix(L, M)
+            #lcp = longest_common_prefix(L, M)
+            lcp = longest_common_prefix_by_index(text, l_text_index, text, m_text_index)
 
             if lcp < l:  # go left
                 R = M
                 r_index = m_index
-                r = longest_common_preffix(R, P)
+                r_text_index = m_text_index
+                #r = longest_common_prefix(R, P)
+                r = longest_common_prefix_by_index(text, r_text_index, substring, 0)
             elif lcp > l:  # go right
                 L = M
                 l_index = m_index
-                l = longest_common_preffix(L, P)
+                l_text_index = m_text_index
+                #l = longest_common_prefix(L, P)
+                l = longest_common_prefix_by_index(text, l_text_index, substring, 0)
             else:
                 # TODO: REFACTOR!!!  argh
-                lcp = longest_common_preffix(P[l:], M[l:])
+                #lcp = longest_common_prefix(P[l:], M[l:])
+                lcp = longest_common_prefix_by_index(substring, l, text, m_text_index + l)
 
                 j = lcp + l  # 0 first mismatch
 
@@ -153,27 +163,35 @@ def lcp_search(text, suffix_array, substring):
                 if M[mismatch_index] > P[mismatch_index]:  # lower half
                     R = M
                     r_index = m_index
+                    r_text_index = m_text_index
                     r = j
 
                 else:  # P[mismatch_index] < M[mismatch_index]:  # upper half
                     L = M
                     l_index = m_index
+                    l_text_index = m_text_index
                     l = j
 
         else:  # elif r > l:
-            lcp = longest_common_preffix(R, M)
+            #lcp = longest_common_prefix(R, M)
+            lcp = longest_common_prefix_by_index(text, r_text_index, text, m_text_index)
 
             if lcp < r:  # go right
                 L = M
                 l_index = m_index
-                l = longest_common_preffix(L, P)
+                l_text_index = m_text_index
+                #l = longest_common_prefix(L, P)
+                l = longest_common_prefix_by_index(text, l_text_index, substring, 0)
             elif lcp > r:  # go left
                 R = M
                 r_index = m_index
-                r = longest_common_preffix(R, P)
+                r_text_index = m_text_index
+                #r = longest_common_prefix(R, P)
+                r = longest_common_prefix_by_index(text, r_text_index, substring, 0)
             else:
                 # TODO: refactor!
-                lcp = longest_common_preffix(P[r:], M[r:])
+                #lcp = longest_common_prefix(P[r:], M[r:])
+                lcp = longest_common_prefix_by_index(substring, r, text, m_text_index + r)
 
                 j = lcp + r  # 0 first mismatch
 
@@ -184,10 +202,12 @@ def lcp_search(text, suffix_array, substring):
                 if M[mismatch_index] > P[mismatch_index]:  # lower half
                     R = M
                     r_index = m_index
+                    r_text_index = m_text_index
                     r = j
                 else:  # elif P[mismatch_index] < M[mismatch_index]:  # upper half
                     L = M
                     l_index = m_index
+                    l_text_index = m_text_index
                     l = j
 
         if l == len(P):
