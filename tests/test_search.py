@@ -1,5 +1,5 @@
 import unittest
-from suffix_array.search import binary_search, compute_lcp_array,\
+from suffix_array.search import binary_search, compute_lcp_array, lcp_search,\
     longest_common_preffix, substring_binary_search, suffix_binary_search
 
 
@@ -111,7 +111,7 @@ class SuffixArrayBinarySearchTestCase(unittest.TestCase):
 
     def test_suffix_binary_search_abracadabra_contains_cada(self):
         text = "abracadabra$"
-        suffix_array = [12, 11, 8, 1, 4, 6, 9, 2, 5, 7, 10, 3]
+        suffix_array = [11, 10, 7, 0, 3, 5, 8, 1, 4, 6, 9, 2]
         substring = "cada"
         expected = 4
         computed = suffix_binary_search(text, suffix_array, substring)
@@ -119,7 +119,7 @@ class SuffixArrayBinarySearchTestCase(unittest.TestCase):
 
     def test_suffix_binary_search_abracadabra_doesnt_contain_abrax(self):
         text = "abracadabra$"
-        suffix_array = [12, 11, 8, 1, 4, 6, 9, 2, 5, 7, 10, 3]
+        suffix_array = [11, 10, 7, 0, 3, 5, 8, 1, 4, 6, 9, 2]
         substring = "abrax"
         expected = -1
         computed = suffix_binary_search(text, suffix_array, substring)
@@ -150,7 +150,64 @@ class SuffixArrayBinarySearchTestCase(unittest.TestCase):
         self.assertEquals(computed, expected)
 
 
+class SuffixArrayLCPSearchTestCase(unittest.TestCase):
+
+    def test_lcp_search_abracadabra_contains_cada(self):
+        text = "abracadabra$"
+        suffix_array = [11, 10, 7, 0, 3, 5, 8, 1, 4, 6, 9, 2]
+        substring = "cada"
+        expected = 4
+        computed = lcp_search(text, suffix_array, substring)
+        self.assertEquals(computed, expected)
+
+    def test_lcp_search_abracadabra_doesnt_contain_abrax(self):
+        text = "abracadabra$"
+        suffix_array = [11, 10, 7, 0, 3, 5, 8, 1, 4, 6, 9, 2]
+        substring = "abrax"
+        expected = -1
+        computed = lcp_search(text, suffix_array, substring)
+        self.assertEquals(computed, expected)
+
+    def test_lcp_search_tobeornottobe_contains_tobe(self):
+        text = "tobeornottobe$"
+        suffix_array = [13, 11, 2, 12, 3, 6, 10, 1, 4, 7, 5, 9, 0, 8]
+        substring = "tobe"
+        expected = 9
+        computed = lcp_search(text, suffix_array, substring)
+        self.assertEquals(computed, expected)
+
+    def test_lcp_search_tobeornottobe_doesnt_contain_abc(self):
+        text = "tobeornottobe$"
+        suffix_array = [13, 11, 2, 12, 3, 6, 10, 1, 4, 7, 5, 9, 0, 8]
+        substring = "abc"
+        expected = -1
+        computed = lcp_search(text, suffix_array, substring)
+        self.assertEquals(computed, expected)
+
+    def test_lcp_search_tobeornottobe_contains_tobeornottobe(self):
+        text = "tobeornottobe$"
+        suffix_array = [13, 11, 2, 12, 3, 6, 10, 1, 4, 7, 5, 9, 0, 8]
+        substring = "tobeornottobe$"
+        expected = 0
+        computed = lcp_search(text, suffix_array, substring)
+        self.assertEquals(computed, expected)
+
+
 class LCPTestCase(unittest.TestCase):
+
+    def test_longest_common_preffix_empty_string(self):
+        string1 = ''
+        string2 = 'other string is empty :/'
+        response = longest_common_preffix(string1, string2)
+        expected = 0
+        self.assertEquals(response, expected)
+
+    def test_longest_common_preffix_different_sizes(self):
+        string1 = 'cada'
+        string2 = 'cadabra$'
+        response = longest_common_preffix(string1, string2)
+        expected = 4
+        self.assertEquals(response, expected)
 
     def test_longest_common_preffix_python_phrases(self):
         string1 = 'python rocks'

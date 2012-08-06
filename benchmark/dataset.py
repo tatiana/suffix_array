@@ -35,7 +35,7 @@ def get_random_substring_list(string, list_size, substring_size):
 if __name__ == "__main__":
     filename = sys.argv[-1]
     fp = open(filename, "r")
-    text = fp.read()
+    text = "%s%s" % (fp.read(), chr(0))
     dataset = {}
     for i in xrange(1, 11):
         item_size = substring_size(i)

@@ -114,12 +114,16 @@ class SuffixArray(object):
 if __name__ == "__main__":
     import time
     i = time.time()
-    fp = open("corpus/bible.txt")
+    fp = open("corpus/world192.txt")
     f = time.time()
     text = fp.read()
     #print "read time:", (f - i)
     suffix_array = SuffixArray(text)
     import profile
     profile.run('suffix_array.process()')
+    import pickle
+    fp = open("world192_array.pck", "w")
+    pickle.dump(suffix_array.temp, fp)
+    fp.close()
     i = time.time()
     #print "process time:", (i - f)
