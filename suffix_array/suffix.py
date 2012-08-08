@@ -1,3 +1,8 @@
+#import cProfile
+import pickle
+import sys
+import time
+
 DOLLAR = chr(0)
 
 
@@ -59,8 +64,6 @@ class SuffixArray(object):
         new_unsorted = {}
         previous_group_by_text_index = self.group_by_text_index[:]
         # for each unsorted group of suffixes, try to sort by next char's group
-        #print "delta:", self._delta
-        #print "size:", sum([len_group for init_group, len_group in self.unsorted.items()])
         unsorted_items = sorted(self.unsorted.items(), reverse=True)
         for init_group, len_group in unsorted_items:
 
@@ -82,7 +85,6 @@ class SuffixArray(object):
             # update groups according to new sorting, in a reverse loop
             # the group of the last item stays the same - so we only update
             # others
-
             for index in xrange(end_group - 1, init_group - 1, -1):
                 current_suffix = self.temp[index]
                 next_suffix = self.temp[index + 1]
@@ -111,19 +113,43 @@ class SuffixArray(object):
         return self.temp
 
 
-if __name__ == "__main__":
-    import time
-    i = time.time()
-    fp = open("corpus/world192.txt")
-    f = time.time()
+def get_array_size(array):
+    size = sum([sys.getsizeof(item) for item in array])
+    size += sys.getsizeof(array)
+    return size
+
+
+def create_suffix_array(filename="corpus/bible.txt"):
+    fp = open(filename)
     text = fp.read()
-    #print "read time:", (f - i)
     suffix_array = SuffixArray(text)
-    import profile
-    profile.run('suffix_array.process()')
-    import pickle
-    fp = open("world192_array.pck", "w")
-    pickle.dump(suffix_array.temp, fp)
+    t1 = time.clock()
+    array = suffix_array.process()
+    t2 = time.clock()
+    print 'took %d ms' % int((t2 - t1) * 1000)
+    print 'size %d bytes' % get_array_size(array)
+    return array
+
+
+def save_suffix_array(array, filename="bible_array.pck"):
+    fp = open(filename, "w")
+    pickle.dump(array, fp)
     fp.close()
-    i = time.time()
-    #print "process time:", (i - f)
+
+
+if __name__ == "__main__":
+    if len(sys.argv) == 2:
+        filename = sys.argv[-1]
+    else:
+        filename = "corpus/world192.txt"
+    print "Processing suffix array for %s..." % filename
+
+    array = create_suffix_array(filename)
+
+    #save_suffix_array(array)
+
+    #import cProfile
+    #fp = open(filename)
+    #text = fp.read()
+    #suffix_array = SuffixArray(text)
+    #cProfile.run('suffix_array.process()')
